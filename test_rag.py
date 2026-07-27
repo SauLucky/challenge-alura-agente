@@ -1,48 +1,47 @@
 from src.embeddings import EmbeddingModel
 from src.vectorstore import VectorStoreManager
 from src.rag_chain import RAGChain
-from src.utils import logger
+from src.rag_service import RAGService
+from src.logger import logger
 
-logger.info("Inicializando el motor del agente inteligente RAG Profesional...")
+logger.info("============================================================")
+logger.info("🚀 SISTEMA RAG EMPRESARIAL CONFIGURADO (SPRINT 4.1)")
+logger.info("============================================================")
 
-# 1. Recuperamos modelos e índices usando el nuevo esquema de configuración
+# 1. Inicializamos infraestructura y componentes base
 embeddings = EmbeddingModel().get_model()
 vector_manager = VectorStoreManager(embeddings)
-retriever = vector_manager.load()
+chain_manager = RAGChain()
 
-# 2. Inicializamos la cadena empresarial
-agent = RAGChain(retriever)
+# 2. Inicializamos el orquestador del Servicio
+rag_service = RAGService(vector_manager=vector_manager, chain_manager=chain_manager)
 
-logger.info("¡Agente empresarial listo para operar!")
-print("\n✨ Sistema operativo. Escribe tu pregunta o escribe 'salir' para concluir.")
+print("\n✨ Entorno de producción verificado. Escribe tu pregunta (escribe 'salir' para concluir).")
 
-# Simulación de memoria conversacional simple por consola
-historial_conversacion = []
+# Hilo de memoria conversacional local
+memory_history = []
 
 while True:
     question = input("\nPregunta: ")
     if question.lower() == "salir":
-        logger.info("Cierre de sesión interactivo solicitado por el operador.")
+        logger.info("Sesión finalizada por el operador.")
         break
         
-    # Compilamos el hilo histórico previo
-    chat_history_str = "\n".join(historial_conversacion[-4:]) # Mantiene memoria de los últimos 2 turnos
-    
-    # Invocamos la cadena estructurada
-    result = agent.ask(question, chat_history=chat_history_str)
+    # Ejecutamos la consulta a través del Servicio Unificado
+    result = rag_service.execute_query(question, memory_history=memory_history)
     
     print("\nRespuesta:\n")
     print(result["answer"])
     
-    # MEJORA 1 y 3: Impresión limpia de Fuentes Consultadas verificadas
+    # Despliegue corporativo estilizado de fuentes sin duplicados
     if result["sources"]:
-        print("\n📚 Fuentes consultadas:")
+        print("\n📚 Fuentes")
         for src in result["sources"]:
             print(src)
             
-    print("-" * 60)
+    print("-" * 80)
     
-    # Guardamos en la memoria conversacional si la respuesta fue válida
+    # Alimentamos la memoria si la respuesta fue legítima y fundamentada
     if result["sources"]:
-        historial_conversacion.append(f"Usuario: {question}")
-        historial_conversacion.append(f"Asistente: {result['answer']}")
+        memory_history.append(f"Usuario: {question}")
+        memory_history.append(f"Asistente: {result['answer']}")

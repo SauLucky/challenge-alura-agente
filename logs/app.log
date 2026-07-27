@@ -4,3 +4,4 @@
 [2026-07-26 21:51:02] INFO [rag_chain.py:55]: Procesando consulta del usuario: '¿Quién ganó el Mundial de 2022?'
 [2026-07-26 21:51:13] INFO [rag_chain.py:55]: Procesando consulta del usuario: '¿Cuál es la política de devoluciones?'
 [2026-07-26 21:51:17] INFO [rag_chain.py:94]: Respuesta generada con éxito y validada contra alucinaciones.
+[2026-07-26 22:26:52] INFO [splitter.py:20]: Segmentación completada: 324 páginas originales transformadas en 567 fragmentos.
