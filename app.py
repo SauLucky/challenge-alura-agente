@@ -1,47 +1,25 @@
 from src.loader import DocumentLoader
+from src.splitter import DocumentSplitter
 
-# Inicializamos el cargador estructurado
+# 1. Ingesta de datos (Sprint 1)
 loader = DocumentLoader()
 documents = loader.load_all_documents()
 
-print("\n" + "="*60)
-print("🔍 VALIDACIÓN DE METADATOS EN PROCESO")
-print("="*60)
+# 2. Chunking Inteligente (Sprint 2)
+splitter = DocumentSplitter(chunk_size=1000, chunk_overlap=200)
+chunks = splitter.split_documents(documents)
 
-# Buscaremos un ejemplo de cada tipo en la lista completa para verificar su estructura
-ejemplo_pdf = None
-ejemplo_excel = None
+print("\n" + "=" * 60)
+print(f"📊 Documentos originales: {len(documents)}")
+print(f"📊 Chunks generados: {len(chunks)}")
+print("=" * 60)
 
-for doc in documents:
-    # Detectamos formato PDF por los metadatos que inyecta PyPDFLoader
-    if "page" in doc.metadata and not ejemplo_pdf:
-        ejemplo_pdf = doc
-    # Detectamos formato Excel por la bandera "type" que definimos en la clase
-    if doc.metadata.get("type") == "inventory" and not ejemplo_excel:
-        ejemplo_excel = doc
-    
-    # Si ya encontramos ambos ejemplos, rompemos el bucle
-    if ejemplo_pdf and ejemplo_excel:
-        break
-
-# Imprimimos los resultados del análisis en pantalla
-if ejemplo_pdf:
-    print("\n[✓] METADATOS DETECTADOS PARA PDFs:")
-    print({
-        "page": ejemplo_pdf.metadata.get("page"),
-        "source_file": ejemplo_pdf.metadata.get("source_file")
-    })
-else:
-    print("\n[×] No se encontraron metadatos válidos de archivos PDF.")
-
-if ejemplo_excel:
-    print("\n[✓] METADATOS DETECTADOS PARA EXCEL:")
-    print({
-        "source_file": ejemplo_excel.metadata.get("source_file"),
-        "row": ejemplo_excel.metadata.get("row"),
-        "type": ejemplo_excel.metadata.get("type")
-    })
-else:
-    print("\n[×] No se encontraron metadatos válidos de archivos Excel.")
-
-print("\n" + "="*60)
+# 3. Pruebas rápidas (Inspección manual de los primeros 3 chunks)
+print("\n🔍 INSPECCIÓN DE FRAGMENTOS INDIVIDUALES:")
+for i in range(min(3, len(chunks))):
+    print("\n" + "=" * 60)
+    print(f"🧩 Chunk {i+1}")
+    print("=" * 60)
+    print(f"📋 Metadatos: {chunks[i].metadata}")
+    print(f"\n📝 Contenido (Primeros 400 caracteres):\n{chunks[i].page_content[:400]}")
+    print("-" * 60)
