@@ -1,0 +1,6 @@
+[2026-07-26 21:50:43] INFO [test_rag.py:6]: Inicializando el motor del agente inteligente RAG Profesional...
+[2026-07-26 21:50:43] INFO [vectorstore.py:38]: Cargando índice vectorial desde 'C:\Users\SAUL\Documents\ALURA Data Science\Challenge AluraAgente - ONE IA FOR TECH\Challenge-Alura-Agente\vector_db'...
+[2026-07-26 21:50:43] INFO [test_rag.py:16]: ¡Agente empresarial listo para operar!
+[2026-07-26 21:51:02] INFO [rag_chain.py:55]: Procesando consulta del usuario: '¿Quién ganó el Mundial de 2022?'
+[2026-07-26 21:51:13] INFO [rag_chain.py:55]: Procesando consulta del usuario: '¿Cuál es la política de devoluciones?'
+[2026-07-26 21:51:17] INFO [rag_chain.py:94]: Respuesta generada con éxito y validada contra alucinaciones.
