@@ -4,7 +4,7 @@ from src.exceptions import LLMQueryError
 
 class RAGService:
     """
-    EL CORAZÓN DEL PROYECTO: Centraliza el procesamiento analítico de prompts,
+    EL CORAZÓN DEL PROYECTO: Centraliza el procesamiento analítico de prompts, 
     limpieza de fuentes sin duplicados e historial conversacional.
     """
     def __init__(self, vector_manager, chain_manager):
@@ -12,7 +12,16 @@ class RAGService:
         self.chain_manager = chain_manager
 
     def _format_clean_sources(self, chunks: list) -> list:
-        """MEJORA 3 y 4: Elimina archivos duplicados, consolida páginas y calcula el porcentaje de confianza."""
+        """MEJORA DE PRODUCCIÓN: Consolida páginas, calcula la relevancia y genera 
+        hipervínculos reales clickeables hacia tu hosting en Hostinger."""
+        url_mapping = {
+            "FAQ.pdf": "https://promotazas.com",
+            "Reglamento.pdf": "https://promotazas.com",
+            "Manual_Proveedores.pdf": "https://promotazas.com",
+            "Politica_Atencion.pdf": "https://promotazas.com",
+            "inventario_supermercado.xlsx": "https://promotazas.com"
+        }
+
         seen_sources = {}
         
         for doc in chunks:
@@ -34,12 +43,15 @@ class RAGService:
             else:
                 seen_sources[source_file]["locations"].add(location_str)
 
-        # Construimos la lista estructurada final requerida sin duplicados
+        # Construimos la lista estructurada final con formato Markdown linkeable
         formatted_sources = []
         for index, (filename, data) in enumerate(seen_sources.items(), start=1):
             locations_joined = ", ".join(sorted(list(data["locations"])))
+            file_url = url_mapping.get(filename, "#")
+            
+            # Creamos el formato de enlace Markdown [Nombre](URL)
             formatted_sources.append(
-                f"{index}. {filename} ({locations_joined}) — Relevancia: {data['max_score']}"
+                f"{index}. 🔗 [{filename}]({file_url}) ({locations_joined}) — Relevancia: {data['max_score']}"
             )
             
         return formatted_sources
@@ -86,7 +98,7 @@ class RAGService:
         ])
 
         try:
-            # 5. CORRECCIÓN: Uso del método oficial de LangChain para formatear el prompt de chat de forma segura
+            # 5. Uso del método oficial de LangChain para formatear el prompt de chat de forma segura
             formatted_prompt = RAG_PROMPT.format_messages(context=context_string, question=user_question)
 
             # 6. Ejecutamos la consulta mediante LangChain directo a Google
